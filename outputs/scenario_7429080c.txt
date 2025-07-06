@@ -1,0 +1,20 @@
+1. **UI Bileşenleri Kontrolü**
+   - Sayfadaki tüm UI bileşenlerinin görünürlüğü ve düzgün çalışıp çalışmadığını kontrol et.
+   
+2. **Butonların İşlevselliği**
+   - "BİLET İŞLEMLERİ", "EK HİZMETLER", "KEŞFET", "FAYDALI BİLGİLER", "DİL SEÇENEKLERİ" gibi butonların tıklanabilir olduğunu ve doğru sayfalara yönlendirdiğini kontrol et.
+   
+3. **Arama ve Filtreleme İşlemleri**
+   - "Nereden" ve "Nereye" seçeneklerinin doğru çalıştığını ve arama sonuçlarının doğru şekilde listelendiğini kontrol et.
+   
+4. **Yolcu Bilgileri Girişi**
+   - Yolcu sayısını artırıp azaltarak işlevselliğin doğru çalıştığını kontrol et.
+   
+5. **Online Check-in ve Rezervasyon İşlemleri**
+   - Online check-in ve rezervasyon formunun doğru çalıştığını ve bilgilerin doğru şekilde gönderildiğini kontrol et.
+   
+6. **Araç Kiralama ve Konaklama İşlemleri**
+   - Araç kiralama ve konaklama seçeneklerinin doğru çalıştığını ve rezervasyon işlemlerinin başarılı bir şekilde tamamlandığını kontrol et.
+   
+7. **E-Bülten Aboneliği**
+   - E-Bülten aboneliği formunun doğru çalıştığını, gerekli bilgilerin eksiksiz girildiğini ve doğru şekilde gönderildiğini kontrol et.
