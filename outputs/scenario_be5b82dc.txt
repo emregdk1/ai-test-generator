@@ -1,0 +1,22 @@
+Test senaryosu:
+
+1. "BİLET İŞLEMLERİ" butonuna tıklanır ve sayfanın ilgili bölümüne yönlendirme yapılıp yapılmadığı kontrol edilir.
+2. "EK HİZMETLER" butonuna tıklanır ve sayfanın ilgili bölümüne yönlendirme yapılıp yapılmadığı kontrol edilir.
+3. "KEŞFET" butonuna tıklanır ve sayfanın ilgili bölümüne yönlendirme yapılıp yapılmadığı kontrol edilir.
+4. "FAYDALI BİLGİLER" butonuna tıklanır ve sayfanın ilgili bölümüne yönlendirme yapılıp yapılmadığı kontrol edilir.
+5. "DİL SEÇENEKLERİ" butonuna tıklanır ve dil seçeneklerinin açılıp açılmadığı kontrol edilir.
+6. "BolBol Üye Girişi" butonuna tıklanır ve üye giriş sayfasına yönlendirme yapılıp yapılmadığı kontrol edilir.
+7. "BolBol Nedir?" linkine tıklanır ve ilgili sayfaya yönlendirme yapılıp yapılmadığı kontrol edilir.
+8. "UÇUŞ EKLE" linkine tıklanır ve uçuş ekleme sayfasına yönlendirme yapılıp yapılmadığı kontrol edilir.
+9. "UCUZ UÇUŞ ARA" linkine tıklanır ve uçuş arama sayfasına yönlendirme yapılıp yapılmadığı kontrol edilir.
+10. "Nereden" ve "Nereye" alanlarına değer girilir ve "UCUZ UÇUŞ ARA" butonuna tıklanır, arama sonuçlarının doğru çıktı verip vermediği kontrol edilir.
+11. "Gidiş Tarihi" ve "Dönüş Tarihi" alanlarına değer girilir ve "UCUZ UÇUŞ ARA" butonuna tıklanır, arama sonuçlarının doğru çıktı verip vermediği kontrol edilir.
+12. "Yolcu" alanına değer girilir ve "UCUZ UÇUŞ ARA" butonuna tıklanır, arama sonuçlarının doğru çıktı verip vermediği kontrol edilir.
+13. "Araç Kiralama" ve "Konaklama" seçeneklerine tıklanır ve ilgili sayfalara yönlendirme yapılıp yapılmadığı kontrol edilir.
+14. "Şehir ya da Havalimanı" alanına değer girilir ve "ARA" butonuna tıklanır, arama sonuçlarının doğru çıktı verip vermediği kontrol edilir.
+15. "Başlangıç Tarihi ve Saati" ve "Bitiş Tarihi ve Saati" alanlarına değer girilir ve "ARA" butonuna tıklanır, arama sonuçlarının doğru çıktı verip vermediği kontrol edilir.
+16. "Misafirler" alanına değer girilir ve "ARA" butonuna tıklanır, arama sonuçlarının doğru çıktı verip vermediği kontrol edilir.
+17. "Sürdürülebilirlik" linkine tıklanır ve ilgili sayfaya yönlendirme yapılıp yapılmadığı kontrol edilir.
+18. "UÇAK İÇİ EĞLENCE", "PAKET YÜKSELT", "YEMEK SEÇİMİ", "KOLTUK SEÇİMİ", "EK BAGAJ", "HIZLI GEÇİŞ", "ARAÇ KİRALAMA", "BOOKING & AIRBNB", "PEGASUS FLEX" linklerine tek tek tıklanır ve ilgili sayfalara yönlendirme yapılıp yapılmadığı kontrol edilir.
+19. "TÜRKİYE", "AVRUPA", "ASYA", "AFRİKA" linklerine tek tek tıklanır ve ilgili sayfalara yönlendirme yapılıp yapılmadığı kontrol edilir.
+20. Şehir linklerine tek tek tıklanır ve ilgili sayfalara yönlendirme yapılıp yapılmadığı kontrol edilir.
