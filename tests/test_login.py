@@ -6,11 +6,11 @@ def test_login():
         context = browser.new_context(viewport={"width": 1920, "height": 1080})
         page = context.new_page()
         
-        page.goto("https://flypgs.com")
+        page.goto("https://prepweb.flypgs.com/booking?language=tr")
         page.wait_for_timeout(3000)  # Sayfanın yüklenmesi için bekle
         
         # "BolBol Üye Girişi" butonuna tıklama
-        page.click("text=BolBol Üye Girişi")
+        page.click("text=Üye Girişi")
         
         # Modal açılmasını bekle
         page.wait_for_selector("input[placeholder='Cep Telefonu']", timeout=10000)

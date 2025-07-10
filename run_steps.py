@@ -1,49 +1,69 @@
-import json
-from playwright.sync_api import sync_playwright
-
+# run_steps.py
 def run_steps(page, steps):
+    results = []
     for step in steps:
-        action = step.get("action")
-        selector = step.get("selector")
-        value = step.get("value")
-        milliseconds = step.get("milliseconds")
-        
-        if action == "goto":
-            print(f"Going to {step['url']}")
-            page.goto(step["url"])
-        elif action == "click":
-            print(f"Clicking {selector}")
-            page.wait_for_selector(selector)
-            page.click(selector)
-        elif action == "fill":
-            print(f"Filling {selector} with '{value}'")
-            page.wait_for_selector(selector)
-            page.fill(selector, value)
-        elif action == "wait":
-            print(f"Waiting for {milliseconds} ms")
-            page.wait_for_timeout(milliseconds)
-        elif action == "press":
-            key = step.get("key")
-            print(f"Pressing key '{key}'")
-            page.keyboard.press(key)
-        else:
-            print(f"Unknown action: {action}")
+        result = {"step": step.description if hasattr(step, 'description') else str(step)}
 
-def main():
-    with open("steps.json", "r", encoding="utf-8") as f:
-        steps = json.load(f)
-    
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False, args=["--start-maximized"])
-        context = browser.new_context(viewport=None)
-        page = context.new_page()
-        
-        run_steps(page, steps)
-        
-        print("Test tamamlandı. Tarayıcı açık kalacak.")
-        page.wait_for_timeout(15000)
-        # context.close()
-        # browser.close()
+        try:
+            if step.action == "goto":
+                page.goto(step.url)
 
-if __name__ == "__main__":
-    main()
+            elif step.action == "click":
+                selector = resolve_selector(page, step.selector)
+                page.click(selector)
+
+            elif step.action == "fill":
+                selector = resolve_selector(page, step.selector)
+                page.fill(selector, step.value)
+
+            elif step.action == "wait":
+                page.wait_for_timeout(step.milliseconds)
+
+            # Screenshot alma
+            result["status"] = "success"
+            result["screenshot"] = page.screenshot(full_page=True).decode("latin1")
+
+        except Exception as e:
+            result["status"] = "fail"
+            result["error"] = str(e)
+            result["screenshot"] = page.screenshot(full_page=True).decode("latin1")
+
+        results.append(result)
+
+    return results
+
+
+def resolve_selector(page, selector):
+    """
+    Verilen selector çalışmazsa, alternatif benzerleri otomatik bulmaya çalışır.
+    """
+    try:
+        page.wait_for_selector(selector, timeout=2000)
+        return selector
+    except:
+        html = page.content()
+        return suggest_alternative_selector(html, selector)
+
+
+def suggest_alternative_selector(html, original_selector):
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html, "html.parser")
+    keyword = extract_keyword_from_selector(original_selector)
+
+    for tag in soup.find_all(True):
+        if keyword.lower() in tag.get_text(strip=True).lower():
+            if tag.name == "input":
+                placeholder = tag.get("placeholder")
+                if placeholder:
+                    return f"input[placeholder='{placeholder}']"
+            elif tag.name == "button" or tag.name == "a":
+                return f"text={tag.get_text(strip=True)}"
+    return original_selector
+
+
+def extract_keyword_from_selector(selector):
+    if "text=" in selector:
+        return selector.split("text=")[-1].strip("'")
+    elif "placeholder=" in selector:
+        return selector.split("placeholder=")[-1].strip("'")
+    return selector

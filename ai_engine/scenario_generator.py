@@ -1,38 +1,45 @@
-import uuid
-import os
 import json
 import openai
-from pathlib import Path
 
-def generate_test_scenario(components_path: str, output_dir: str = "outputs"):
-    with open(components_path, "r", encoding="utf-8") as f:
-        components = json.load(f)
+def generate_scenario(components, page_type, target):
+    # Bileşenleri filtrele
+    filtered = [
+        c for c in components if c.get("text") or c.get("aria-label") or c.get("placeholder")
+    ][:150]  # token sınırını aşmamak için sınırla
 
-    # 🧹 Temizlik: Boş selector, tag veya text içerenleri çıkar
-    components = [c for c in components if c.get("text") and c.get("selector") and c.get("tag")]
+    prompt = f"""
+Aşağıdaki JSON, bir '{page_type}' sayfasındaki web bileşenlerini temsil etmektedir.
+Senin görevin, bu bileşenleri kullanarak '{target}' hedefini gerçekleştirecek bir test senaryosu üretmektir.
+Adımlar sade ve anlaşılır olsun. Adımları JSON formatında bir dizi (array) olarak döndür.
 
-    # ✂️ Token limitine takılmamak için kısıtlama
-    components = components[:150]
+Bileşen listesi:
+{json.dumps(filtered, indent=2, ensure_ascii=False)}
 
-    prompt = f"""Aşağıda bir web sayfasındaki UI bileşenlerinin JSON listesi yer almaktadır. 
-Bu verilere dayanarak, anlamlı bir test senaryosu üretin:
+Lütfen sadece aşağıdaki formatta JSON döndür:
 
-{json.dumps(components, indent=2, ensure_ascii=False)}
+[
+  "Siteyi aç https://example.com",
+  "'Kullanıcı Adı' inputuna testuser yaz",
+  "'Şifre' inputuna secret123 yaz",
+  "'Giriş Yap' butonuna tıkla",
+  "3 saniye bekle"
+]
 """
 
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "Sen bir kıdemli test otomasyon mühendisisin."},
+            {"role": "system", "content": "Sen deneyimli bir test otomasyon mühendisisin."},
             {"role": "user", "content": prompt}
         ],
-        temperature=0.3
+        temperature=0.2
     )
 
-    output_text = response.choices[0].message["content"]
-    scenario_file = os.path.join(output_dir, f"scenario_{uuid.uuid4().hex[:8]}.txt")
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
-    with open(scenario_file, "w", encoding="utf-8") as f:
-        f.write(output_text)
-
-    print(f"✅ Test scenario generated and saved to {scenario_file}")
+    try:
+        generated = response.choices[0].message["content"]
+        steps = json.loads(generated)
+        assert isinstance(steps, list)
+        return steps
+    except Exception as e:
+        print(f"⚠️ Yanıt parse edilemedi: {e}")
+        return []

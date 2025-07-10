@@ -1,56 +1,34 @@
 [
-    {
-        "action": "goto",
-        "url": "https://www.flypgs.com/"
-    },
-    {
-        "action": "click",
-        "selector": "text=Tek Yön"
-    },
-    {
-        "action": "click",
-        "selector": "div.SelectBox__control--departure"
-    },
-    {
-        "action": "fill",
-        "selector": "input.SelectBox__form-input.tstnm_fly_search_tab_1_departure_input",
-        "value": "SAW"
-    },
-    {
-        "action": "wait",
-        "milliseconds": 1000
-    },
-    {
-        "action": "click",
-        "selector": "div.SelectBox__menu-list div.SelectBox__option"
-    },
-    {
-        "action": "click",
-        "selector": "div.SelectBox__control--arrival"
-    },
-    {
-        "action": "fill",
-        "selector": "input.SelectBox__form-input.tstnm_fly_search_tab_1_arrival_input",
-        "value": "SZF"
-    },
-    {
-        "action": "wait",
-        "milliseconds": 1000
-    },
-    {
-        "action": "click",
-        "selector": "div.SelectBox__menu-list div.SelectBox__option"
-    },
-    {
-        "action": "click",
-        "selector": "input[name='departureDate']"
-    },
-    {
-        "action": "click",
-        "selector": "//td[@role='gridcell' and not(contains(@class, 'disabled')) and text()='10']"
-    },
-    {
-        "action": "wait",
-        "milliseconds": 5000
-    }
+  {
+    "action": "goto",
+    "url": "https://webct.flypgs.com",
+    "description": "Siteyi aç https://webct.flypgs.com"
+  },
+  {
+    "action": "click",
+    "selector": "text=BolBol Üye Girişi",
+    "description": "'BolBol Üye Girişi' yazan elemana tıkla"
+  },
+  {
+    "action": "fill",
+    "selector": "input[placeholder='Cep Telefonu']",
+    "value": "5416202270",
+    "description": "'Cep Telefonu' inputuna 5416202270 yaz"
+  },
+  {
+    "action": "fill",
+    "selector": "input[type='password']",
+    "value": "Test1234!",
+    "description": "'Parola' inputuna Test1234! yaz"
+  },
+  {
+    "action": "click",
+    "selector": "text=Giriş Yap",
+    "description": "'Giriş Yap' butonuna tıkla"
+  },
+  {
+    "action": "wait",
+    "milliseconds": 5000,
+    "description": "5 saniye bekle"
+  }
 ]

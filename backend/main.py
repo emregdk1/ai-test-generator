@@ -1,84 +1,71 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from playwright.sync_api import sync_playwright
-import asyncio
-import re
+from pydantic import BaseModel
+from typing import List
 import base64
+import asyncio
+from playwright.sync_api import sync_playwright
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
 
+# ✅ CORS düzgün yapılandırıldı
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Frontend URL ekle
+    allow_origins=["*"],  # Dilersen sadece "http://localhost:5500" yazabilirsin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-def run_playwright_steps(steps):
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(viewport={"width": 1280, "height": 720})
-        page = context.new_page()
-
-        def parse_step(step: str):
-            s = step.strip().lower()
-
-            if s.startswith("siteyi aç"):
-                url = step.lower().replace("siteyi aç", "").strip()
-                page.goto(url)
-
-            elif "yazan elemana tıkla" in s:
-                start = step.find("'") + 1
-                end = step.find("'", start)
-                text = step[start:end]
-                page.wait_for_selector(f"text={text}", timeout=10000)
-                page.click(f"text={text}")
-
-            elif "'inputuna" in s and "yaz" in s:
-                start = step.find("'") + 1
-                end = step.find("'", start)
-                placeholder = step[start:end]
-                value_start = step.find(f"{placeholder}' inputuna") + len(f"{placeholder}' inputuna")
-                value = step[value_start:].replace("yaz", "").strip()
-                page.fill(f"input[placeholder='{placeholder}']", value)
-
-            elif "saniye bekle" in s:
-                match = re.search(r"(\d+)", step)
-                if match:
-                    saniye = int(match.group(1))
-                    page.wait_for_timeout(saniye * 1000)
-
-            else:
-                print(f"Tanımlanamayan adım: {step}")
-
-        results = []
-        for step in steps:
-            try:
-                parse_step(step)
-                # Ekran görüntüsünü sayfanın görünür kısmını alacak şekilde çekiyoruz
-                screenshot_bytes = page.screenshot(full_page=False)
-                screenshot_base64 = base64.b64encode(screenshot_bytes).decode("utf-8")
-
-                results.append({
-                    "step": step,
-                    "status": "success",
-                    "screenshot": screenshot_base64
-                })
-            except Exception as e:
-                results.append({
-                    "step": step,
-                    "status": "fail",
-                    "error": str(e)
-                })
-
-        browser.close()
-        return results
+class TestRequest(BaseModel):
+    steps: List[str]
 
 @app.post("/run-test")
-async def run_test(request: Request):
-    data = await request.json()
-    steps = data.get("steps", [])
+async def run_test(request: TestRequest):
+    steps = request.steps
+    results = []
+
+    def run_playwright_steps(steps):
+        logging.info("Test başladı...")
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context()
+            page = context.new_page()
+            logging.info("Tarayıcı başlatıldı...")
+
+            for step in steps:
+                logging.info(f"Adım işleniyor: {step}")
+                try:
+                    if step.startswith("Siteyi aç"):
+                        url = step.split(" ")[2]
+                        page.goto(url)
+                    elif "inputuna" in step and "yaz" in step:
+                        value = step.split("yaz")[1].strip()
+                        label = step.split("inputuna")[0].strip().strip("'")
+                        page.get_by_label(label).fill(value)
+                    elif "butonuna tıkla" in step or "yazan elemana tıkla" in step:
+                        text = step.split("'")[1]
+                        page.get_by_text(text).click()
+                    elif "saniye bekle" in step:
+                        seconds = int(step.split(" ")[0])
+                        page.wait_for_timeout(seconds * 1000)
+
+                    screenshot = page.screenshot()
+                    encoded = base64.b64encode(screenshot).decode("utf-8")
+                    results.append({"step": step, "status": "pass", "screenshot": encoded})
+                except Exception as e:
+                    screenshot = page.screenshot()
+                    encoded = base64.b64encode(screenshot).decode("utf-8")
+                    results.append({"step": step, "status": "fail", "error": str(e), "screenshot": encoded})
+                    break
+
+            browser.close()
+            logging.info("Test tamamlandı.")
+
     loop = asyncio.get_event_loop()
-    result = await loop.run_in_executor(None, run_playwright_steps, steps)
-    return {"results": result}
+    await loop.run_in_executor(None, run_playwright_steps, steps)
+
+    return {"results": results}
